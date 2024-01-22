@@ -14,7 +14,7 @@ export class LocationsService {
   async getTrafficLocations(
     datetime: string,
   ): Promise<Array<LocationTrafficImageType>> {
-    return await this.trafficService.getTrafficImages(datetime);
+    return await this.trafficService.getGeocodedTrafficLocations(datetime);
   }
 
   async getWeatherForecasts(
