@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TrafficModule } from './traffic/traffic.module';
 import { LocationsModule } from './locations/locations.module';
+import { WeatherModule } from './weather/weather.module';
 
 @Module({
-  imports: [TrafficModule, LocationsModule],
+  imports: [TrafficModule, LocationsModule, WeatherModule],
   controllers: [AppController],
   providers: [AppService],
 })

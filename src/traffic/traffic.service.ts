@@ -5,6 +5,7 @@ import {
   TrafficCameraType,
   TrafficImagesResponseType,
 } from './types/traffic';
+import config from 'src/config';
 
 @Injectable()
 export class TrafficService {
@@ -24,7 +25,7 @@ export class TrafficService {
   async getTrafficImages(
     datetime: string,
   ): Promise<Array<LocationTrafficImageType>> {
-    const TRAFFIC_URL = `${process.env.GOV_TRANSPORT_URL}/traffic-images`;
+    const TRAFFIC_URL = `${config.transportUrl}/traffic-images`;
 
     try {
       const { data }: TrafficImagesResponseType = await axios.get(
