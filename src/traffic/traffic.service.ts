@@ -6,12 +6,9 @@ import {
   TrafficImagesResponseType,
 } from './types/traffic';
 import config from 'src/config';
-import { GeolocationService } from 'src/geolocation/geolocation.service';
 
 @Injectable()
 export class TrafficService {
-  constructor(private geolocationService: GeolocationService) {}
-
   mapTrafficImageToLocationTraffic(
     camera: TrafficCameraType,
   ): LocationTrafficImageType {
@@ -40,15 +37,5 @@ export class TrafficService {
     } catch (error) {
       throw new InternalServerErrorException(error.messages);
     }
-  }
-
-  async getGeocodedTrafficLocations(
-    datetime: string,
-  ): Promise<Array<LocationTrafficImageType>> {
-    const trafficLocations = await this.getTrafficImages(datetime);
-    const locationNames =
-      this.geolocationService.getLocationNamesFromCoordinates(trafficLocations);
-
-    return locationNames;
   }
 }

@@ -3,6 +3,7 @@ export type LocationWeatherForecastType = {
   forecast: string;
   latitude: number;
   longitude: number;
+  distance?: number;
 };
 
 export type AreaMetadataType = {

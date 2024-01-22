@@ -1,3 +1,5 @@
+import { CoordinateType } from 'src/common/types/coordinates';
+
 export type GeocodingType = {
   status: {
     code: number;
@@ -15,3 +17,5 @@ export type GeocodingType = {
 export type ReverseGeocodingResponseType = {
   data: GeocodingType;
 };
+
+export type CoordinateDistanceType = CoordinateType & { distance: number };
