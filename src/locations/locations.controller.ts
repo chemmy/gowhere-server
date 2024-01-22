@@ -22,11 +22,13 @@ export class LocationsController {
     @Query('datetime', QueryDateValidationPipe) datetime: string,
     @Query('latitude', QueryNumberValidationPipe) latitude: number,
     @Query('longitude', QueryNumberValidationPipe) longitude: number,
+    @Query('location') location: string,
   ): Promise<LocationWeatherForecastType> {
     return this.locationsService.getWeatherForecast(
       datetime,
       latitude,
       longitude,
+      location,
     );
   }
 }

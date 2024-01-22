@@ -3,7 +3,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+
 import { GeolocationService } from 'src/geolocation/geolocation.service';
+import { ReportsService } from 'src/reports/reports.service';
 import { TrafficService } from 'src/traffic/traffic.service';
 import { LocationTrafficImageType } from 'src/traffic/types/traffic';
 import { LocationWeatherForecastType } from 'src/weather/types/weather';
@@ -15,6 +17,7 @@ export class LocationsService {
     private trafficService: TrafficService,
     private weatherService: WeatherService,
     private geolocationService: GeolocationService,
+    private reportService: ReportsService,
   ) {}
 
   async getTrafficLocations(
@@ -41,8 +44,14 @@ export class LocationsService {
     datetime: string,
     latitude: number,
     longitude: number,
+    location: string,
   ): Promise<LocationWeatherForecastType> {
     try {
+      // TODO: Add bad request handling if no location
+      await this.reportService.create({
+        search_location: location,
+        search_timestamp: new Date(datetime).setSeconds(0, 0).valueOf(),
+      });
       const locationsWeatherForecast =
         await this.weatherService.getWeatherForecastLocations(datetime);
 
