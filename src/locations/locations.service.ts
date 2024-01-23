@@ -47,7 +47,6 @@ export class LocationsService {
     location: string,
   ): Promise<LocationWeatherForecastType> {
     try {
-      // TODO: Add bad request handling if no location
       await this.reportService.create({
         search_location: location,
         search_timestamp: new Date(datetime).setSeconds(0, 0).valueOf(),
