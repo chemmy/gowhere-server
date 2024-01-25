@@ -16,6 +16,11 @@ export class ReportsController {
     return this.reportService.getRecentSearches();
   }
 
+  @Get('recent-location-searches')
+  async getRecentLocationSearches(): Promise<Array<Log>> {
+    return this.reportService.getRecentLocationSearches();
+  }
+
   @Get('top-searches')
   async getTopSearches(
     @Query('start_datetime', QueryNumberValidationPipe) start: number,

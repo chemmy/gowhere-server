@@ -8,6 +8,7 @@ import { LocationsModule } from './locations/locations.module';
 import { WeatherModule } from './weather/weather.module';
 import { GeolocationModule } from './geolocation/geolocation.module';
 import { ReportsModule } from './reports/reports.module';
+import { RedisService } from './common/utils/redis.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const dbConfig = require('../ormconfig.js');
@@ -22,6 +23,7 @@ const dbConfig = require('../ormconfig.js');
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RedisService],
+  exports: [RedisService],
 })
 export class AppModule {}

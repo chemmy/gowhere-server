@@ -43,6 +43,24 @@ export class ReportsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+  async getRecentLocationSearches(): Promise<Array<Log>> {
+    try {
+      return this.logRepo
+        .createQueryBuilder('log')
+        .select([
+          'MIN(log.id) AS id',
+          'log.search_location AS search_location',
+          'MAX(log.search_timestamp) AS search_timestamp',
+          'MAX(log.searched_when) AS searched_when',
+        ])
+        .groupBy('log.search_location')
+        .orderBy('searched_when', 'DESC')
+        .limit(10)
+        .getRawMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 
   async getTopSearches(
     start: number,

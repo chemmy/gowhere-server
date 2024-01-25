@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import config from 'src/config';
 import { CoordinateType } from 'src/common/types/coordinates';
@@ -11,10 +11,15 @@ import {
   ReverseGeocodingResponseType,
 } from './types/geolocation';
 
-import mockGeocodedLocation from '../common/mocks/geocodedTrafficLocations';
+import {
+  REDIS_KEY_NAMESPACES,
+  RedisService,
+} from 'src/common/utils/redis.service';
 
 @Injectable()
 export class GeolocationService {
+  constructor(private readonly redisService: RedisService) {}
+
   geocodeUrl = `${config.geocodeUrl}?key=${config.geocodeApiKey}&q=`;
 
   async getReverseGeocode(
@@ -25,33 +30,51 @@ export class GeolocationService {
     return await axios.get(url);
   }
 
+  getGeocodeRedisKey = ({ latitude, longitude }: CoordinateType): string =>
+    `${REDIS_KEY_NAMESPACES.GEOCODE}-${latitude}-${longitude}`;
+
+  async getReverseGeocodeOnRedis(coordinate: CoordinateType) {
+    return await this.redisService.getValue(
+      this.getGeocodeRedisKey(coordinate),
+    );
+  }
+
   async getLocationNamesFromCoordinates(
     locations: Array<LocationTrafficImageType>,
   ): Promise<Array<LocationTrafficImageType>> {
     if (!locations?.length) return [];
 
-    // REMOVE MOCK
-    return mockGeocodedLocation;
+    const locationWithNames = await Promise.all(
+      locations.map(async (location) => {
+        try {
+          const nameFromRedis = await this.getReverseGeocodeOnRedis(location);
 
-    // Mock used because of api request limit
+          if (nameFromRedis) {
+            return { ...location, name: nameFromRedis };
+          }
 
-    const promises = locations.map((location) =>
-      this.getReverseGeocode(location),
+          const result = await this.getReverseGeocode(location);
+          // TODO ERROR HANDLING
+
+          const nameFromApi = this.getLocationNameFromGeocodingResult(
+            result.data,
+          );
+
+          await this.redisService.setValue(
+            this.getGeocodeRedisKey(location),
+            nameFromApi,
+          );
+
+          return { ...location, name: nameFromApi };
+        } catch (e) {
+          // TODO ERROR NOTI
+          console.warn('Location name not found', e);
+          return location;
+        }
+      }),
     );
 
-    try {
-      const results: Array<ReverseGeocodingResponseType> =
-        await Promise.all(promises);
-
-      return locations.map((location, idx) => {
-        const name = this.getLocationNameFromGeocodingResult(
-          results[idx]?.data,
-        );
-        return { ...location, name };
-      });
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
-    }
+    return locationWithNames.filter((location) => location.name);
   }
 
   getLocationNameFromGeocodingResult = (data: GeocodingType): string => {
@@ -111,7 +134,7 @@ export class GeolocationService {
       }
     }
 
-    const { distance } = nearest;
+    const { distance } = nearest || {};
     if (distance && distance > NEAR_DISTANCE) return null;
 
     return nearest;

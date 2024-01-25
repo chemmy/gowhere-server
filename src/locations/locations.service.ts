@@ -27,8 +27,6 @@ export class LocationsService {
       const trafficLocations =
         await this.trafficService.getTrafficImages(datetime);
 
-      // TODO: handle no results
-
       const locationNames =
         this.geolocationService.getLocationNamesFromCoordinates(
           trafficLocations,
