@@ -1,73 +1,60 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# GoWhere Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A simple application that returns traffic images and weather forecast based on datetime provided. Also available is reports for the searches made.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Local Setup
 
-## Description
+1. Clone repository or download zip
+2. Add .env to root folder, copy from envsample file and update if necessary
+3. Run `npm i` to install dependencies
+4. **`CACHING`** - Install redis then start (use links if need more details)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+   1. Mac: https://redis.io/docs/install/install-redis/install-redis-on-mac-os
 
-## Installation
+      ```
+      brew install redis
 
-```bash
-$ npm install
-```
+      brew services start redis
+      ```
 
-## Running the app
+   2. Windows: https://redis.io/docs/install/install-redis/install-redis-on-windows/
 
-```bash
-# development
-$ npm run start
+5. **`DATABASE`**
+   1. Install pgAdmin https://www.pgadmin.org/download/
+   2. Create localhost server
+   3. Add database named `gowhere`
+   4. Note: synchronization is currently turned on so it will automatically create the columns for your database.
+6. Run server `npm run start:dev`
 
-# watch mode
-$ npm run start:dev
+## Application
 
-# production mode
-$ npm run start:prod
-```
+1. This application will provide list of locations with their traffic images and weather forecast based on date and time
+2. In addition, reports are also available based on the searches made.
+3. Api routes are defined on all controllers
 
-## Test
+## Assumptions / Critical Decisions
 
-```bash
-# unit tests
-$ npm run test
+1. Use of third-party service (OpenCage) for reverse-geocoding instead of the provided second api. OpenCage provided more concise location name in comparison to the second api which shares location names.
+2. Caching of OpenCage results per coordinates, assuming the API will provide similar response. Currently it is left to its default TTL which is indefinite; can be changed based on needs.
+3. Not caching traffic and weather fetches as they are based on date&time which can be very different per user. They should also be up to date as much as possible.
 
-# e2e tests
-$ npm run test:e2e
+## Architecture Overview
 
-# test coverage
-$ npm run test:cov
-```
+### NestJS
 
-## Support
+NestJS is a framework for building scalable Node.js server-side applications, making use of HTTP server framework under the hood. The architecture is heavily inspired by Angular.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Modules - encapsulates related features and functionalities.
+- Controllers - responsible for handling incoming HTTP requests and defining API routes.
+- Services - contains the business logic of the application
+- Providers - services, repositories, factories, helpers can be treated as providers which can be injected as a dependency
 
-## Stay in touch
+### Database
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+This project uses PostgreSQL as the database. Configuration should be available in .env file for successful connection.
 
-## License
+## Improvements
 
-Nest is [MIT licensed](LICENSE).
+1. Add user field for reports to link each search to a user
+2. Cloudwatch
+3. Sentry

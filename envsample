@@ -1,0 +1,13 @@
+PORT=3002
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgresPassword
+DB_DATABASE=gowhere
+
+GOV_TRANSPORT_URL=https://api.data.gov.sg/v1/transport
+GOV_WEATHER_URL=https://api.data.gov.sg/v1/environment
+
+GEOCODE_URL=https://api.opencagedata.com/geocode/v1/json
+GEOCODE_API_KEY='08cd455c4c974caea7734f2241a07255'
