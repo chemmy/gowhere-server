@@ -49,6 +49,7 @@ export class LocationsService {
         search_location: location,
         search_timestamp: new Date(datetime).setSeconds(0, 0).valueOf(),
       });
+
       const locationsWeatherForecast =
         await this.weatherService.getWeatherForecastLocations(datetime);
 
