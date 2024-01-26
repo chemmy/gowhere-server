@@ -1,4 +1,4 @@
-import { CoordinateType } from 'src/common/types/coordinates';
+import { CoordinateType } from '../../common/types/coordinates';
 
 export type GeocodingType = {
   status: {

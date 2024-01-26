@@ -1,11 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
 
-import { LocationTrafficImageType } from 'src/traffic/types/traffic';
-import { QueryDateValidationPipe } from 'src/common/pipes/query-date-validation';
+import { LocationTrafficImageType } from '../traffic/types/traffic';
+import { QueryDateValidationPipe } from '../common/pipes/query-date-validation';
 import { LocationsService } from './locations.service';
-import { LocationWeatherForecastType } from 'src/weather/types/weather';
-import { QueryNumberValidationPipe } from 'src/common/pipes/query-number-validation';
-import { QueryRequiredStringValidationPipe } from 'src/common/pipes/query-required-string-validation';
+import { LocationWeatherForecastType } from '../weather/types/weather';
+import { QueryNumberValidationPipe } from '../common/pipes/query-number-validation';
+import { QueryRequiredStringValidationPipe } from '../common/pipes/query-required-string-validation';
 
 @Controller('locations')
 export class LocationsController {

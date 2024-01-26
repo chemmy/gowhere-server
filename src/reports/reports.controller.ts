@@ -1,11 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
+
 import { ReportsService } from './reports.service';
 import { Log } from './entities/log.entity';
-import { QueryNumberValidationPipe } from 'src/common/pipes/query-number-validation';
 import {
   MostSearchesPeriodResponseType,
   TopSearchResponseType,
 } from './types/report-response';
+import { QueryNumberValidationPipe } from '../common/pipes/query-number-validation';
 
 @Controller('reports')
 export class ReportsController {

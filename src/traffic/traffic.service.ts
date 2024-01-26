@@ -5,7 +5,7 @@ import {
   TrafficCameraType,
   TrafficImagesResponseType,
 } from './types/traffic';
-import config from 'src/config';
+import { config } from '../config';
 
 @Injectable()
 export class TrafficService {

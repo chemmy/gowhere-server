@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 
-import config from 'src/config';
-import { CoordinateType } from 'src/common/types/coordinates';
-import { LocationTrafficImageType } from 'src/traffic/types/traffic';
-import { STATUS_CODE } from 'src/common/constants/status';
+import { config } from '../config';
+import { CoordinateType } from '../common/types/coordinates';
+import { LocationTrafficImageType } from '../traffic/types/traffic';
+import { STATUS_CODE } from '../common/constants/status';
 import {
   CoordinateDistanceType,
   GeocodingType,
@@ -14,7 +14,7 @@ import {
 import {
   REDIS_KEY_NAMESPACES,
   RedisService,
-} from 'src/common/utils/redis.service';
+} from '../common/utils/redis.service';
 
 @Injectable()
 export class GeolocationService {
@@ -54,7 +54,6 @@ export class GeolocationService {
           }
 
           const result = await this.getReverseGeocode(location);
-          // TODO ERROR HANDLING
 
           const nameFromApi = this.getLocationNameFromGeocodingResult(
             result.data,
@@ -67,7 +66,6 @@ export class GeolocationService {
 
           return { ...location, name: nameFromApi };
         } catch (e) {
-          // TODO ERROR NOTI
           console.warn('Location name not found', e);
           return location;
         }
@@ -88,10 +86,10 @@ export class GeolocationService {
   };
 
   calculateCoordinateDistance(
-    latitude1: number,
-    longitude1: number,
-    latitude2: number,
-    longitude2: number,
+    latitude1: number = 0,
+    longitude1: number = 0,
+    latitude2: number = 0,
+    longitude2: number = 0,
   ): number {
     const earthRadius = 6371;
 
@@ -118,7 +116,7 @@ export class GeolocationService {
     longitude: number,
     coordinates: Array<CoordinateType>,
   ): CoordinateDistanceType {
-    const NEAR_DISTANCE = 5;
+    const NEAR_DISTANCE = 100;
     let nearest: CoordinateDistanceType = null;
 
     for (const coordinate of coordinates) {
@@ -129,13 +127,13 @@ export class GeolocationService {
         coordinate.longitude,
       );
 
-      if (!nearest?.distance || distance < nearest.distance) {
+      if (nearest?.distance == null || distance < nearest.distance) {
         nearest = { ...coordinate, distance };
       }
     }
 
     const { distance } = nearest || {};
-    if (distance && distance > NEAR_DISTANCE) return null;
+    if (distance != null && distance > NEAR_DISTANCE) return null;
 
     return nearest;
   }

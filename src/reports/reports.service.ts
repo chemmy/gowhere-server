@@ -43,6 +43,7 @@ export class ReportsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
   async getRecentLocationSearches(): Promise<Array<Log>> {
     try {
       return this.logRepo

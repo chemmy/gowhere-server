@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
-import config from 'src/config';
+import { config } from '../config';
 import {
   AreaMetadataType,
   ForecastType,

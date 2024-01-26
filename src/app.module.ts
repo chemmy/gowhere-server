@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,12 +10,11 @@ import { GeolocationModule } from './geolocation/geolocation.module';
 import { ReportsModule } from './reports/reports.module';
 import { RedisService } from './common/utils/redis.service';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const dbConfig = require('../ormconfig.js');
+import { dbConfig } from './config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(dbConfig),
+    TypeOrmModule.forRoot(dbConfig as TypeOrmModuleOptions),
     TrafficModule,
     LocationsModule,
     WeatherModule,

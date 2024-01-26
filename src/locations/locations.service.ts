@@ -4,12 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { GeolocationService } from 'src/geolocation/geolocation.service';
-import { ReportsService } from 'src/reports/reports.service';
-import { TrafficService } from 'src/traffic/traffic.service';
-import { LocationTrafficImageType } from 'src/traffic/types/traffic';
-import { LocationWeatherForecastType } from 'src/weather/types/weather';
-import { WeatherService } from 'src/weather/weather.service';
+import { GeolocationService } from '../geolocation/geolocation.service';
+import { ReportsService } from '../reports/reports.service';
+import { TrafficService } from '../traffic/traffic.service';
+import { LocationTrafficImageType } from '../traffic/types/traffic';
+import { LocationWeatherForecastType } from '../weather/types/weather';
+import { WeatherService } from '../weather/weather.service';
 
 @Injectable()
 export class LocationsService {
@@ -51,8 +51,6 @@ export class LocationsService {
       });
       const locationsWeatherForecast =
         await this.weatherService.getWeatherForecastLocations(datetime);
-
-      // TODO: handle no results
 
       const nearestLocationWeather =
         this.geolocationService.findNearestCoordinates(

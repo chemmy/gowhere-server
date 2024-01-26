@@ -1,7 +1,9 @@
 import { format } from 'date-fns';
 
-export const isValidDate = (value: string | Date): boolean =>
-  !isNaN(new Date(value).getTime());
+export const isValidDate = (value: string | Date): boolean => {
+  if (!value) return false;
+  return !isNaN(new Date(value).getTime());
+};
 
 export const dateToIsoString = (value: string | Date): string => {
   const date = new Date(value);

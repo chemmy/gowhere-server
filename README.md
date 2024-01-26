@@ -37,6 +37,7 @@ A simple application that returns traffic images and weather forecast based on d
 1. Use of third-party service (OpenCage) for reverse-geocoding instead of the provided second api. OpenCage provided more concise location name in comparison to the second api which shares location names.
 2. Caching of OpenCage results per coordinates, assuming the API will provide similar response. Currently it is left to its default TTL which is indefinite; can be changed based on needs.
 3. Not caching traffic and weather fetches as they are based on date&time which can be very different per user. They should also be up to date as much as possible.
+4. Set maximum of 100 as a distance considered as near to a location in finding nearest location
 
 ## Architecture Overview
 
