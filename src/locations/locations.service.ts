@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -23,6 +24,8 @@ export class LocationsService {
   async getTrafficLocations(
     datetime: string,
   ): Promise<Array<LocationTrafficImageType>> {
+    Logger.log(`Retrieving traffic locations for ${datetime}`);
+
     try {
       const trafficLocations =
         await this.trafficService.getTrafficImages(datetime);
@@ -32,9 +35,13 @@ export class LocationsService {
           trafficLocations,
         );
 
+      Logger.log(`Successfully retrieved traffic locations for ${datetime}`);
+
       return locationNames;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const { message } = error;
+      Logger.error(`Error in retrieving locations for ${datetime}`, message);
+      throw new InternalServerErrorException(message);
     }
   }
 
@@ -44,6 +51,9 @@ export class LocationsService {
     longitude: number,
     location: string,
   ): Promise<LocationWeatherForecastType> {
+    const params = JSON.stringify({ datetime, latitude, longitude, location });
+    Logger.log(`Retrieving weather forecast for ${params}`);
+
     try {
       await this.reportService.create({
         search_location: location,
@@ -63,12 +73,18 @@ export class LocationsService {
       if (!nearestLocationWeather)
         throw new NotFoundException('No weather forecast near the area found.');
 
+      Logger.log(`Successfully retrieved weather forecast for ${params}`);
+
       return nearestLocationWeather as LocationWeatherForecastType;
     } catch (error) {
-      if (error instanceof NotFoundException)
-        throw new NotFoundException(error.message);
+      const { message } = error;
+      if (error instanceof NotFoundException) {
+        Logger.error(`No weather forecast found for ${params}`);
+        throw new NotFoundException(message);
+      }
 
-      throw new InternalServerErrorException(error.message);
+      Logger.error(`Error retrieving weather forecast for ${params}`, message);
+      throw new InternalServerErrorException(message);
     }
   }
 }

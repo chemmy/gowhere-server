@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -26,6 +30,8 @@ export class ReportsService {
   }
 
   async getRecentSearches(): Promise<Array<Log>> {
+    Logger.log(`Retrieving recent searches`);
+
     try {
       return this.logRepo
         .createQueryBuilder('log')
@@ -40,11 +46,14 @@ export class ReportsService {
         .limit(10)
         .getRawMany();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const { message } = error;
+      Logger.error(`Error retrieving recent searches`, message);
+      throw new InternalServerErrorException(message);
     }
   }
 
   async getRecentLocationSearches(): Promise<Array<Log>> {
+    Logger.log(`Retrieving recent location searches`);
     try {
       return this.logRepo
         .createQueryBuilder('log')
@@ -59,7 +68,9 @@ export class ReportsService {
         .limit(10)
         .getRawMany();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const { message } = error;
+      Logger.error(`Error retrieving recent location searches`, message);
+      throw new InternalServerErrorException(message);
     }
   }
 
@@ -67,6 +78,9 @@ export class ReportsService {
     start: number,
     end: number,
   ): Promise<Array<TopSearchResponseType>> {
+    const params = JSON.stringify({ start, end });
+    Logger.log(`Retrieving top searches for ${params}`);
+
     try {
       return this.logRepo
         .createQueryBuilder('log')
@@ -83,7 +97,9 @@ export class ReportsService {
         .limit(10)
         .getRawMany();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const { message } = error;
+      Logger.error(`Error retrieving top searches for ${params}`, message);
+      throw new InternalServerErrorException(message);
     }
   }
 
@@ -92,6 +108,8 @@ export class ReportsService {
     end: number,
   ): Promise<MostSearchesPeriodResponseType> {
     const ONE_HR_TIMESTAMP = 3600000;
+    const params = JSON.stringify({ start, end });
+    Logger.log(`Retrieving most searches for period ${params}`);
 
     try {
       return this.logRepo
@@ -112,7 +130,12 @@ export class ReportsService {
         .limit(1)
         .getRawOne();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const { message } = error;
+      Logger.error(
+        `Error retrieving most searches for period ${params}`,
+        message,
+      );
+      throw new InternalServerErrorException(message);
     }
   }
 }
