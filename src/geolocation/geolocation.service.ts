@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { config } from '../config';
 import { CoordinateType } from '../common/types/coordinates';
@@ -15,7 +15,6 @@ import {
   REDIS_KEY_NAMESPACES,
   RedisService,
 } from '../common/utils/redis.service';
-
 @Injectable()
 export class GeolocationService {
   constructor(private readonly redisService: RedisService) {}
@@ -39,38 +38,45 @@ export class GeolocationService {
     );
   }
 
+  async getReverseGeocodedName(
+    location: LocationTrafficImageType | CoordinateType,
+  ): Promise<LocationTrafficImageType | CoordinateType> {
+    const param = JSON.stringify(location);
+    Logger.log(`Retrieving reverse geocoded name for ${param}`);
+
+    try {
+      const nameFromRedis = await this.getReverseGeocodeOnRedis(location);
+
+      if (nameFromRedis) {
+        return { ...location, name: nameFromRedis };
+      }
+
+      const result = await this.getReverseGeocode(location);
+
+      const nameFromApi = this.getLocationNameFromGeocodingResult(result.data);
+
+      await this.redisService.setValue(
+        this.getGeocodeRedisKey(location),
+        nameFromApi,
+      );
+
+      return { ...location, name: nameFromApi };
+    } catch (e) {
+      Logger.warn(`Location name not found for $${param}`, e.message);
+      return location;
+    }
+  }
+
   async getLocationNamesFromCoordinates(
     locations: Array<LocationTrafficImageType>,
   ): Promise<Array<LocationTrafficImageType>> {
     if (!locations?.length) return [];
 
-    const locationWithNames = await Promise.all(
-      locations.map(async (location) => {
-        try {
-          const nameFromRedis = await this.getReverseGeocodeOnRedis(location);
-
-          if (nameFromRedis) {
-            return { ...location, name: nameFromRedis };
-          }
-
-          const result = await this.getReverseGeocode(location);
-
-          const nameFromApi = this.getLocationNameFromGeocodingResult(
-            result.data,
-          );
-
-          await this.redisService.setValue(
-            this.getGeocodeRedisKey(location),
-            nameFromApi,
-          );
-
-          return { ...location, name: nameFromApi };
-        } catch (e) {
-          console.warn('Location name not found', e);
-          return location;
-        }
-      }),
-    );
+    const locationWithNames = (await Promise.all(
+      locations.map(
+        async (location) => await this.getReverseGeocodedName(location),
+      ),
+    )) as Array<LocationTrafficImageType>;
 
     return locationWithNames.filter((location) => location.name);
   }

@@ -49,19 +49,29 @@ export class LocationsService {
     datetime: string,
     latitude: number,
     longitude: number,
-    location: string,
   ): Promise<LocationWeatherForecastType> {
-    const params = JSON.stringify({ datetime, latitude, longitude, location });
+    const params = JSON.stringify({ datetime, latitude, longitude });
     Logger.log(`Retrieving weather forecast for ${params}`);
 
     try {
+      const weatherForecastPromise =
+        this.weatherService.getWeatherForecastLocations(datetime);
+
+      const geocodedLocationPromise =
+        this.geolocationService.getReverseGeocodedName({
+          latitude,
+          longitude,
+        });
+
+      const [locationsWeatherForecast, location] = await Promise.all([
+        weatherForecastPromise,
+        geocodedLocationPromise,
+      ]);
+
       await this.reportService.create({
-        search_location: location,
+        search_location: location.name || '',
         search_timestamp: new Date(datetime).setSeconds(0, 0).valueOf(),
       });
-
-      const locationsWeatherForecast =
-        await this.weatherService.getWeatherForecastLocations(datetime);
 
       const nearestLocationWeather =
         this.geolocationService.findNearestCoordinates(
