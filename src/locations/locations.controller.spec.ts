@@ -52,7 +52,6 @@ describe('LocationsController', () => {
         '2024-01-01',
         1.241,
         4.241,
-        'Some, Place',
       );
       expect(service.getWeatherForecast).toHaveBeenCalled();
       expect(result).toEqual(mappedLocationWeatherForecasts);

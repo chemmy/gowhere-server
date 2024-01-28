@@ -17,6 +17,8 @@ A simple application that returns traffic images and weather forecast based on d
    git clone git@github.com:chemmy/gowhere-server.git
 
    cd gowhere-server
+
+   npm i
    ```
 
 3. Build server application image
@@ -25,7 +27,7 @@ A simple application that returns traffic images and weather forecast based on d
    ```
 4. Run docker containers
    ```bash
-   docker-compose up
+   docker-compose up --build
    ```
 
 ### Without Docker

@@ -98,14 +98,12 @@ describe('LocationsService', () => {
     const longitude = 103.65;
 
     it('should return the weather forecast of a specific location with date and time', async () => {
-      const locationName = 'Someplace';
       axios.get = jest.fn().mockResolvedValue(mockedWeatherResponse);
 
       const result = await service.getWeatherForecast(
         datetime,
         latitude,
         longitude,
-        locationName,
       );
 
       const expected = {
@@ -119,11 +117,10 @@ describe('LocationsService', () => {
     });
 
     it('should return 404 error if no are found close to coordinates', async () => {
-      const locationName = 'Someplace';
       axios.get = jest.fn().mockResolvedValue(mockedWeatherResponse);
 
       await expect(
-        service.getWeatherForecast(datetime, 2.41, 80.235, locationName),
+        service.getWeatherForecast(datetime, 2.41, 80.235),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -131,7 +128,7 @@ describe('LocationsService', () => {
       const errorMessage = 'Internal Server Error';
       (axios.get as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
       await expect(
-        service.getWeatherForecast(datetime, 2.41, 80.235, 'Try'),
+        service.getWeatherForecast(datetime, 2.41, 80.235),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
