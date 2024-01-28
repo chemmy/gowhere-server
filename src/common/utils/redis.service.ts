@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
+import { config } from '../../config';
 
 export const REDIS_KEY_NAMESPACES = {
   GEOCODE: 'geocode',
@@ -10,7 +11,10 @@ export class RedisService {
   private readonly client: Redis;
 
   constructor() {
-    this.client = new Redis();
+    this.client = new Redis({
+      host: config.redisHost,
+      port: parseInt(config.redisPort),
+    });
   }
 
   async setValue(key: string, value: string): Promise<void> {

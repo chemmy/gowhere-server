@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  api:
+    image: ctutor/gowhere-server
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres_db
+      - redis
+    environment:
+      PORT: 3002
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgresPassword
+      DB_DATABASE: gowhere
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GOV_TRANSPORT_URL: https://api.data.gov.sg/v1/transport
+      GOV_WEATHER_URL: https://api.data.gov.sg/v1/environment
+      GEOCODE_URL: https://api.opencagedata.com/geocode/v1/json
+      GEOCODE_API_KEY: 08cd455c4c974caea7734f2241a07255
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/usr/src/app
+    command: npm run start:dev
+
+  postgres_db:
+    image: postgres:13
+    ports:
+      - '35000:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgresPassword
+      POSTGRES_DB: gowhere
+
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'

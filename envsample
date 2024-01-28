@@ -1,10 +1,13 @@
-PORT=3002
+PORT=3001
 
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgresPassword
 DB_DATABASE=gowhere
+
+REDIS_HOST=
+REDIS_PORT=6379
 
 GOV_TRANSPORT_URL=https://api.data.gov.sg/v1/transport
 GOV_WEATHER_URL=https://api.data.gov.sg/v1/environment

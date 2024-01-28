@@ -4,7 +4,40 @@ A simple application that returns traffic images and weather forecast based on d
 
 ## Local Setup
 
+### With Docker
+
+1. Make sure you have the following tools installed on your machine:
+
+   - [Docker](https://docs.docker.com/get-docker/)
+   - [Docker Compose](https://docs.docker.com/compose/install/)
+
+2. Clone the Repository:
+
+   ```bash
+   git clone git@github.com:chemmy/gowhere-server.git
+
+   cd gowhere-server
+   ```
+
+3. Build server application image
+   ```bash
+   docker build . -t ctutor/gowhere-server
+   ```
+4. Run docker containers
+   ```bash
+   docker-compose up
+   ```
+
+### Without Docker
+
 1. Clone repository or download zip
+
+   ```bash
+   git clone git@github.com:chemmy/gowhere-server.git
+
+   cd gowhere-server
+   ```
+
 2. Add .env to root folder, copy from envsample file and update if necessary
 3. Run `npm i` to install dependencies
 4. **`CACHING`** - Install redis then start (use links if need more details)

@@ -3,6 +3,8 @@ dotenvConfig();
 
 export const config = {
   port: process.env.PORT,
+  redisHost: process.env.REDIS_HOST,
+  redisPort: process.env.REDIS_PORT,
   transportUrl: process.env.GOV_TRANSPORT_URL,
   weatherUrl: process.env.GOV_WEATHER_URL,
   geocodeUrl: process.env.GEOCODE_URL,
