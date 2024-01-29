@@ -12,6 +12,7 @@ import {
   MostSearchesPeriodResponseType,
   TopSearchResponseType,
 } from './types/report-response';
+import { dateToIsoString } from '../common/utils/date';
 
 @Injectable()
 export class ReportsService {
@@ -112,7 +113,7 @@ export class ReportsService {
     Logger.log(`Retrieving most searches for period ${params}`);
 
     try {
-      return this.logRepo
+      const data = await this.logRepo
         .createQueryBuilder('l1')
         .select([
           'to_timestamp(l1.searched_when / 1000) AS start_date',
@@ -129,6 +130,11 @@ export class ReportsService {
         .orderBy('count', 'DESC')
         .limit(1)
         .getRawOne();
+
+      return {
+        start_date: dateToIsoString(data.start_date),
+        count: data.count,
+      };
     } catch (error) {
       const { message } = error;
       Logger.error(

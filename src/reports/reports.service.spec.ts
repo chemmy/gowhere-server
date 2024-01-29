@@ -9,18 +9,27 @@ import { ReportsService } from './reports.service';
 import { Log } from './entities/log.entity';
 import { ReportsController } from './reports.controller';
 import { dbConfig } from '../config';
+import { dateToIsoString } from '../common/utils/date';
 
 describe('ReportsService', () => {
   let service: ReportsService;
+
+  const start_timestamp = 1706279940507;
+  const end_timestamp = 1706494139998;
 
   const mockResult = [
     {
       id: 1,
       search_location: 'Location1',
-      search_timestamp: 1234567890,
-      searched_when: 1234567890,
+      search_timestamp: start_timestamp,
+      searched_when: end_timestamp,
     },
   ];
+
+  const mockMostSearchesData = {
+    start_date: dateToIsoString(new Date(start_timestamp)),
+    count: 20,
+  };
 
   const mockLogRepo = {
     create: jest.fn(),
@@ -34,7 +43,7 @@ describe('ReportsService', () => {
       groupBy: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
-      getRawOne: jest.fn().mockResolvedValueOnce(mockResult),
+      getRawOne: jest.fn().mockResolvedValueOnce(mockMostSearchesData),
       getRawMany: jest.fn().mockResolvedValueOnce(mockResult),
     })),
   };
@@ -91,7 +100,6 @@ describe('ReportsService', () => {
   describe('getRecentSearches', () => {
     it('should return recent searches', async () => {
       const result = await service.getRecentSearches();
-      mockLogRepo.createQueryBuilder().getRawMany;
 
       expect(result).toEqual(mockResult);
     });
@@ -100,27 +108,30 @@ describe('ReportsService', () => {
   describe('getRecentLocationSearches', () => {
     it('should return recent location searches', async () => {
       const result = await service.getRecentLocationSearches();
-      mockLogRepo.createQueryBuilder().getRawMany;
 
       expect(result).toEqual(mockResult);
     });
   });
 
   describe('getTopSearches', () => {
-    it('should return recent searches', async () => {
-      const result = await service.getTopSearches(123217, 128316);
-      mockLogRepo.createQueryBuilder().getRawMany;
+    it('should return top searches', async () => {
+      const result = await service.getTopSearches(
+        start_timestamp,
+        start_timestamp,
+      );
 
       expect(result).toEqual(mockResult);
     });
   });
 
   describe('getMostSearchesPeriod', () => {
-    it('should return recent searches', async () => {
-      const result = await service.getMostSearchesPeriod(123217, 128316);
-      mockLogRepo.createQueryBuilder().getRawMany;
+    it('should return most searches in a period', async () => {
+      const result = await service.getMostSearchesPeriod(
+        start_timestamp,
+        end_timestamp,
+      );
 
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual(mockMostSearchesData);
     });
   });
 });
